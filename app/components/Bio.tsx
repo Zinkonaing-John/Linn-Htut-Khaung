@@ -17,7 +17,7 @@ const Bio = () => (
       artist with both a singular vision and the talent to realize it.
     </p>
     <a
-      href="#bio"
+      href="/Bio"
       className="bio-button bg-yellow-800 text-white font-bold py-3 px-8 rounded hover:bg-yellow-700 transition inline-block"
     >
       READ FULL BIO

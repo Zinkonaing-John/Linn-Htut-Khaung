@@ -28,7 +28,7 @@ const Contact = () => (
             type="email"
             required
             placeholder="Your Email Address"
-            className="w-full md:w-96 px-4 py-3 rounded text-lg  text-white border-white focus:ring-2 focus:ring-white-700 outline-none"
+            className="w-full md:w-96 px-4 py-3 rounded text-lg text-white border-2 border-white focus:ring-2 focus:ring-white-700 outline-none"
           />
           <button
             type="submit"

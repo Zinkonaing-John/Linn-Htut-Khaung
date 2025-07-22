@@ -1,13 +1,15 @@
-import React, { Fragment } from "react";
+"use client";
+import React, { Fragment, useRef, useState } from "react";
+import { usePathname } from "next/navigation";
+import Link from "next/link";
 
 const navItems = [
-  { name: "Bio", href: "#bio", active: true },
-  { name: "Events", href: "#events", active: true },
-  { name: "Works", href: "#", active: true, dropdown: true },
-  { name: "Albums", href: "#albums", active: true },
-  { name: "Media", href: "#media", active: true },
-  { name: "Press", href: "#press", active: true },
-  { name: "Contact", href: "#contact", active: false },
+  { name: "Bio", href: "/Bio", active: true },
+  { name: "Events", href: "/events", active: true },
+  { name: "Works", href: "/works", active: true, dropdown: true },
+  { name: "Albums", href: "/albums", active: true },
+  { name: "Media", href: "/media", active: true },
+  { name: "Contact", href: "/contact", active: true },
 ];
 
 const socialLinks = [
@@ -50,12 +52,27 @@ const socialLinks = [
 ];
 
 export default function Header() {
+  const pathname = usePathname();
+  const [worksOpen, setWorksOpen] = useState(false);
+  const closeTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const handleWorksEnter = () => {
+    if (closeTimer.current) clearTimeout(closeTimer.current);
+    setWorksOpen(true);
+  };
+  const handleWorksLeave = () => {
+    closeTimer.current = setTimeout(() => setWorksOpen(false), 150);
+  };
+
   return (
     <header className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-b from-black/90 to-black/70 border-b border-black/30">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-1">
+          <Link
+            href="/"
+            className="flex items-center space-x-1 hover:opacity-80 transition"
+          >
             <span className="text-white text-2xl font-bold tracking-tight">
               LINN
             </span>
@@ -65,28 +82,72 @@ export default function Header() {
             <span className="text-gray-300 text-2xl font-light tracking-tight">
               KHAUNG
             </span>
-          </div>
+          </Link>
           {/* Navigation */}
           <nav className="flex space-x-6">
             {navItems.map((item) => (
               <Fragment key={item.name}>
-                <a
-                  href={item.href}
-                  className={`text-white font-semibold hover:text-yellow-300 transition-colors ${
-                    item.active ? "" : "opacity-40 cursor-not-allowed"
-                  }`}
-                >
-                  {item.name}
-                  {item.dropdown && (
-                    <svg
-                      className="inline ml-1 w-3 h-3"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
+                {item.dropdown ? (
+                  <div
+                    className="relative"
+                    onMouseEnter={handleWorksEnter}
+                    onMouseLeave={handleWorksLeave}
+                  >
+                    <button
+                      className={`font-semibold hover:text-yellow-300 transition-colors ${
+                        pathname.startsWith("/works")
+                          ? "text-yellow-400"
+                          : "text-white"
+                      } ${item.active ? "" : "opacity-40 cursor-not-allowed"}`}
                     >
-                      <path d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.585l3.71-3.355a.75.75 0 1 1 1.02 1.1l-4.25 3.85a.75.75 0 0 1-1.02 0l-4.25-3.85a.75.75 0 0 1 .02-1.06z" />
-                    </svg>
-                  )}
-                </a>
+                      {item.name}
+                      <svg
+                        className="inline ml-1 w-3 h-3"
+                        fill="currentColor"
+                        viewBox="0 0 20 20"
+                      >
+                        <path d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.585l3.71-3.355a.75.75 0 1 1 1.02 1.1l-4.25 3.85a.75.75 0 0 1-1.02 0l-4.25-3.85a.75.75 0 0 1 .02-1.06z" />
+                      </svg>
+                    </button>
+                    {worksOpen && (
+                      <div className="absolute left-0 mt-2 w-48 bg-black/95 border border-yellow-900 rounded shadow-lg flex flex-col transition-opacity duration-200 z-50">
+                        <Link
+                          href="/works"
+                          className="block px-6 py-3 text-white hover:bg-yellow-900/30 transition"
+                        >
+                          All
+                        </Link>
+                        <Link
+                          href="/works/classical-solo"
+                          className="block px-6 py-3 text-white hover:bg-yellow-900/30 transition"
+                        >
+                          Classical Solo
+                        </Link>
+                        <Link
+                          href="/works/jazz-solo"
+                          className="block px-6 py-3 text-white hover:bg-yellow-900/30 transition"
+                        >
+                          Jazz Solo
+                        </Link>
+                        <Link
+                          href="/works/others"
+                          className="block px-6 py-3 text-white hover:bg-yellow-900/30 transition"
+                        >
+                          Others
+                        </Link>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <a
+                    href={item.href}
+                    className={`font-semibold hover:text-yellow-300 transition-colors ${
+                      pathname === item.href ? "text-yellow-400" : "text-white"
+                    } ${item.active ? "" : "opacity-40 cursor-not-allowed"}`}
+                  >
+                    {item.name}
+                  </a>
+                )}
               </Fragment>
             ))}
           </nav>
